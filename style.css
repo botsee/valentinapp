@@ -1,70 +1,86 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
-  background: linear-gradient(180deg, #ff758c, #ff7eb3);
+  background: radial-gradient(circle at top, #1a001f, #000000 70%);
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  color: white;
 }
 
 .phone {
   width: 390px;
   height: 720px;
-  background: rgba(255,255,255,0.95);
-  border-radius: 40px;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.3);
-  padding: 25px;
+  background: rgba(20, 0, 25, 0.85);
+  backdrop-filter: blur(30px);
+  border-radius: 42px;
+  box-shadow: 0 25px 70px rgba(255, 0, 90, 0.25);
+  padding: 28px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
   overflow: hidden;
+  animation: fadeIn 0.5s ease;
 }
 
 h2 {
   text-align: center;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 input {
-  padding: 12px;
-  border-radius: 16px;
-  border: 1px solid #ddd;
-  margin: 8px 0;
+  padding: 14px;
+  border-radius: 20px;
+  border: none;
+  margin: 10px 0;
   text-align: center;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  outline: none;
 }
 
 button {
-  padding: 12px;
+  padding: 14px;
   border: none;
-  border-radius: 20px;
+  border-radius: 25px;
   margin: 6px 0;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 15px;
   cursor: pointer;
-  background: #ff4d6d;
+  background: linear-gradient(135deg,#ff005c,#ff4d6d);
   color: white;
-  transition: 0.2s;
+  transition: 0.25s ease;
 }
 
-button:hover {
-  transform: scale(1.03);
+button:active {
+  transform: scale(0.95);
 }
 
 .secondary {
-  background: #eee;
-  color: #333;
+  background: rgba(255,255,255,0.1);
 }
 
 .card {
-  padding: 20px;
-  min-height: 120px;
+  padding: 28px;
+  min-height: 150px;
   text-align: center;
-  font-size: 18px;
+  font-size: 19px;
+  border-radius: 30px;
+  background: rgba(255,255,255,0.05);
+  box-shadow: inset 0 0 40px rgba(255,0,90,0.1);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  animation: fadeIn 0.4s ease;
 }
 
 .score {
   text-align: center;
   font-weight: bold;
+  color: #ff4d9d;
 }
 
 .toggle {
@@ -73,19 +89,23 @@ button:hover {
   justify-content: center;
 }
 
+.activeToggle {
+  background: linear-gradient(135deg,#ff005c,#ff4d6d);
+}
+
 .hearts {
   position: absolute;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  overflow: hidden;
 }
 
 .heart {
   position: absolute;
   bottom: -20px;
-  animation: float 6s linear infinite;
-  opacity: 0.6;
+  font-size: 18px;
+  animation: float 7s linear infinite;
+  opacity: 0.5;
 }
 
 @keyframes float {
@@ -93,15 +113,21 @@ button:hover {
   100% { transform: translateY(-800px); opacity:0; }
 }
 
-.shake {
-  animation: shake 0.4s;
+@keyframes fadeIn {
+  from { opacity:0; transform: translateY(10px); }
+  to { opacity:1; transform: translateY(0); }
 }
 
-@keyframes shake {
-  0%{transform:translateX(0);}
-  25%{transform:translateX(-5px);}
-  50%{transform:translateX(5px);}
-  75%{transform:translateX(-5px);}
-  100%{transform:translateX(0);}
+.progressBar {
+  height:6px;
+  border-radius:10px;
+  background: rgba(255,255,255,0.1);
+  margin-top:10px;
+  overflow:hidden;
 }
 
+.progressFill {
+  height:100%;
+  background: linear-gradient(90deg,#ff005c,#ff4d6d);
+  transition: width 0.3s ease;
+}
