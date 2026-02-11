@@ -1,20 +1,10 @@
-const PIN = "0214";
-
 const state = {
-  screen: "pin",
-  mood: "soft",
-  score: 0,
-  turn: 0,
-  names: [],
-  currentQuestion: "",
-  currentGameQuestion: ""
+  screen: "menu",
+  deck: [],
+  currentPack: "romantic"
 };
 
 const app = document.getElementById("app");
-
-function vibrate(ms = 40) {
-  if (navigator.vibrate) navigator.vibrate(ms);
-}
 
 function render() {
   app.innerHTML = `
@@ -22,158 +12,97 @@ function render() {
       ${renderScreen()}
     </div>
   `;
-  attachSwipe();
+  if (state.screen === "deck") initDeck();
 }
 
 function renderScreen() {
-  if (state.screen === "pin") return renderPin();
-  if (state.screen === "names") return renderNames();
   if (state.screen === "menu") return renderMenu();
-  if (state.screen === "common") return renderCommon();
-  if (state.screen === "game") return renderGame();
-}
-
-function renderPin() {
-  return `
-    <h2>🔐 Private Access</h2>
-    <input id="pinInput" type="password" maxlength="4" placeholder="4 számjegy" />
-    <button onclick="checkPin()">Belépés</button>
-  `;
-}
-
-function renderNames() {
-  return `
-    <h2>👤 Kik vagytok?</h2>
-    <input id="name1" placeholder="Első név" />
-    <input id="name2" placeholder="Második név" />
-    <button onclick="saveNames()">Tovább</button>
-  `;
+  if (state.screen === "deck") return renderDeck();
 }
 
 function renderMenu() {
   return `
     <h2>🔥 After Dark</h2>
-    <button onclick="goCommon()">💕 Közös kérdések</button>
-    <button onclick="goGame()">🧠 Mennyire ismersz?</button>
+    <button onclick="startDeck('romantic')">💕 Romantika</button>
+    <button onclick="startDeck('passion')">🔥 Szenvedély</button>
+    <button onclick="startDeck('sexuality')">🌙 Szexualitás</button>
+    <button onclick="startDeck('deep')">🧠 Mély</button>
+    <button onclick="startDeck('fantasy')">🎭 Fantázia</button>
+    <button onclick="startDeck('intimacy')">💌 Intimitás</button>
   `;
 }
 
-function renderCommon() {
-  if (!state.currentQuestion)
-    state.currentQuestion = randomFrom(getQuestions());
-
+function renderDeck() {
   return `
-    <h2>Közös mód</h2>
-    <div class="card" id="card">${state.currentQuestion}</div>
-    <button onclick="nextCommon()">Következő</button>
+    <h2>${state.currentPack.toUpperCase()}</h2>
+    <div class="deck" id="deck"></div>
     <button class="secondary" onclick="goMenu()">Vissza</button>
   `;
 }
 
-function renderGame() {
-  if (!state.currentGameQuestion)
-    state.currentGameQuestion = randomFrom(questions.game);
-
-  const currentName = state.names[state.turn % 2];
-  const progress = Math.min((state.score / 10) * 100, 100);
-
-  return `
-    <h2>${currentName} kérdez</h2>
-    <div class="card" id="card">${state.currentGameQuestion}</div>
-    <div class="progressBar">
-      <div class="progressFill" style="width:${progress}%"></div>
-    </div>
-    <button onclick="correct()">✔️ Helyes</button>
-    <button onclick="nextTurn()">Passzolom</button>
-    <button class="secondary" onclick="goMenu()">Vissza</button>
-  `;
+function startDeck(pack) {
+  state.currentPack = pack;
+  state.deck = shuffle([...questions[pack]]);
+  state.screen = "deck";
+  render();
 }
 
-function attachSwipe() {
-  const card = document.getElementById("card");
-  if (!card) return;
-
-  let startX = 0;
-
-  card.addEventListener("touchstart", e => {
-    startX = e.touches[0].clientX;
-  });
-
-  card.addEventListener("touchend", e => {
-    const endX = e.changedTouches[0].clientX;
-    const diff = endX - startX;
-
-    if (diff > 80) swipeRight();
-    if (diff < -80) swipeLeft();
-  });
-}
-
-function swipeRight() {
-  const card = document.getElementById("card");
-  card.classList.add("swipe-right");
-  vibrate();
-  setTimeout(() => {
-    if (state.screen === "common") nextCommon();
-    if (state.screen === "game") correct();
-  }, 250);
-}
-
-function swipeLeft() {
-  const card = document.getElementById("card");
-  card.classList.add("swipe-left");
-  vibrate();
-  setTimeout(() => {
-    if (state.screen === "common") nextCommon();
-    if (state.screen === "game") nextTurn();
-  }, 250);
-}
-
-function checkPin() {
-  const input = document.getElementById("pinInput").value;
-  if (input === PIN) {
-    state.screen = "names";
-    render();
-  }
-}
-
-function saveNames() {
-  const n1 = document.getElementById("name1").value;
-  const n2 = document.getElementById("name2").value;
-  if (!n1 || !n2) return;
-  state.names = [n1, n2];
+function goMenu() {
   state.screen = "menu";
   render();
 }
 
-function goMenu() { state.screen = "menu"; render(); }
-function goCommon() { state.screen = "common"; state.currentQuestion=""; render(); }
-function goGame() { state.screen = "game"; state.currentGameQuestion=""; render(); }
+function initDeck() {
+  const deck = document.getElementById("deck");
+  deck.innerHTML = "";
 
-function nextCommon() {
-  state.currentQuestion = randomFrom(getQuestions());
-  render();
+  state.deck.slice(0,3).forEach(text => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerText = text;
+    deck.appendChild(card);
+  });
+
+  attachSwipe();
 }
 
-function correct() {
-  state.score++;
-  state.turn++;
-  state.currentGameQuestion = randomFrom(questions.game);
-  render();
+function attachSwipe() {
+  const cards = document.querySelectorAll(".card");
+  const topCard = cards[0];
+  if (!topCard) return;
+
+  let startX = 0;
+
+  topCard.addEventListener("pointerdown", e => {
+    startX = e.clientX;
+    topCard.setPointerCapture(e.pointerId);
+  });
+
+  topCard.addEventListener("pointermove", e => {
+    if (!startX) return;
+    const diff = e.clientX - startX;
+    topCard.style.transform = `translateX(${diff}px) rotate(${diff/10}deg)`;
+  });
+
+  topCard.addEventListener("pointerup", e => {
+    const diff = e.clientX - startX;
+
+    if (Math.abs(diff) > 100) {
+      topCard.style.transform = `translateX(${diff > 0 ? 500 : -500}px) rotate(${diff/5}deg)`;
+      setTimeout(() => {
+        state.deck.shift();
+        initDeck();
+      }, 300);
+    } else {
+      topCard.style.transform = "";
+    }
+
+    startX = 0;
+  });
 }
 
-function nextTurn() {
-  state.turn++;
-  state.currentGameQuestion = randomFrom(questions.game);
-  render();
-}
-
-function getQuestions() {
-  const custom = JSON.parse(localStorage.getItem("custom_" + state.mood)) || [];
-  return [...questions[state.mood], ...custom];
-}
-
-function randomFrom(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
 }
 
 render();
