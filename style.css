@@ -27,9 +27,8 @@ body {
 
 h1 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   font-size: 22px;
-  letter-spacing: 1px;
 }
 
 .menu {
@@ -64,8 +63,23 @@ h1 {
   justify-content: center;
   text-align: center;
   font-size: 19px;
-  box-shadow: inset 0 0 30px rgba(255,0,90,0.15);
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+}
+
+.progress {
+  height: 6px;
+  width: 100%;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg,#ff005c,#ff4d6d);
+  width: 0%;
+  transition: width 0.3s ease;
 }
 
 .buttons {
@@ -102,5 +116,4 @@ button {
   justify-content: space-between;
   margin-bottom: 10px;
   font-size: 14px;
-  opacity: 0.9;
 }
