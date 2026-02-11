@@ -12,14 +12,17 @@ const state = {
 
 const app = document.getElementById("app");
 
+function vibrate(ms = 40) {
+  if (navigator.vibrate) navigator.vibrate(ms);
+}
+
 function render() {
   app.innerHTML = `
     <div class="phone">
-      <div class="hearts" id="hearts"></div>
       ${renderScreen()}
     </div>
   `;
-  createHearts();
+  attachSwipe();
 }
 
 function renderScreen() {
@@ -40,7 +43,7 @@ function renderPin() {
 
 function renderNames() {
   return `
-    <h2>👤 Kik vagytok ma este?</h2>
+    <h2>👤 Kik vagytok?</h2>
     <input id="name1" placeholder="Első név" />
     <input id="name2" placeholder="Második név" />
     <button onclick="saveNames()">Tovább</button>
@@ -61,18 +64,8 @@ function renderCommon() {
 
   return `
     <h2>Közös mód</h2>
-
-    <div class="toggle">
-      <button class="${state.mood === "soft" ? "activeToggle" : "secondary"}"
-        onclick="changeMood('soft')">Romantikus</button>
-      <button class="${state.mood === "wild" ? "activeToggle" : "secondary"}"
-        onclick="changeMood('wild')">Vadabb</button>
-    </div>
-
-    <div class="card">${state.currentQuestion}</div>
-
+    <div class="card" id="card">${state.currentQuestion}</div>
     <button onclick="nextCommon()">Következő</button>
-    <button onclick="addCustom()">➕ Saját kérdés</button>
     <button class="secondary" onclick="goMenu()">Vissza</button>
   `;
 }
@@ -86,20 +79,53 @@ function renderGame() {
 
   return `
     <h2>${currentName} kérdez</h2>
-
-    <div class="card">${state.currentGameQuestion}</div>
-
-    <button onclick="correct()">✔️ Helyes</button>
-    <button onclick="nextTurn()">Passzolom</button>
-
-    <div class="score">Pont: ${state.score}</div>
-
+    <div class="card" id="card">${state.currentGameQuestion}</div>
     <div class="progressBar">
       <div class="progressFill" style="width:${progress}%"></div>
     </div>
-
+    <button onclick="correct()">✔️ Helyes</button>
+    <button onclick="nextTurn()">Passzolom</button>
     <button class="secondary" onclick="goMenu()">Vissza</button>
   `;
+}
+
+function attachSwipe() {
+  const card = document.getElementById("card");
+  if (!card) return;
+
+  let startX = 0;
+
+  card.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+  });
+
+  card.addEventListener("touchend", e => {
+    const endX = e.changedTouches[0].clientX;
+    const diff = endX - startX;
+
+    if (diff > 80) swipeRight();
+    if (diff < -80) swipeLeft();
+  });
+}
+
+function swipeRight() {
+  const card = document.getElementById("card");
+  card.classList.add("swipe-right");
+  vibrate();
+  setTimeout(() => {
+    if (state.screen === "common") nextCommon();
+    if (state.screen === "game") correct();
+  }, 250);
+}
+
+function swipeLeft() {
+  const card = document.getElementById("card");
+  card.classList.add("swipe-left");
+  vibrate();
+  setTimeout(() => {
+    if (state.screen === "common") nextCommon();
+    if (state.screen === "game") nextTurn();
+  }, 250);
 }
 
 function checkPin() {
@@ -122,12 +148,6 @@ function saveNames() {
 function goMenu() { state.screen = "menu"; render(); }
 function goCommon() { state.screen = "common"; state.currentQuestion=""; render(); }
 function goGame() { state.screen = "game"; state.currentGameQuestion=""; render(); }
-
-function changeMood(m) {
-  state.mood = m;
-  state.currentQuestion = randomFrom(getQuestions());
-  render();
-}
 
 function nextCommon() {
   state.currentQuestion = randomFrom(getQuestions());
@@ -152,31 +172,8 @@ function getQuestions() {
   return [...questions[state.mood], ...custom];
 }
 
-function addCustom() {
-  const q = prompt("Írd be az új kérdést:");
-  if (!q) return;
-  const key = "custom_" + state.mood;
-  const arr = JSON.parse(localStorage.getItem(key)) || [];
-  arr.push(q);
-  localStorage.setItem(key, JSON.stringify(arr));
-  alert("Mentve 🔥");
-}
-
 function randomFrom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function createHearts() {
-  const container = document.getElementById("hearts");
-  if (!container) return;
-  for (let i = 0; i < 12; i++) {
-    const h = document.createElement("div");
-    h.className = "heart";
-    h.innerText = "🖤";
-    h.style.left = Math.random() * 100 + "%";
-    h.style.animationDuration = 5 + Math.random() * 5 + "s";
-    container.appendChild(h);
-  }
 }
 
 render();
