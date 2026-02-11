@@ -33,5 +33,13 @@ const questions = {
     "Mi az a titok, amit csak nekem mondanál el?",
     "Melyik közös pillanatunk volt a legintimebb?",
     "Mikor érezted magad a legközelebb hozzám?"
+  ],
+
+  game: [
+    "Mi a kedvenc közös programom?",
+    "Mi az a dolog, amitől azonnal jobb kedvem lesz?",
+    "Mi az egyik titkos vágyam?",
+    "Melyik érintést szeretem a legjobban?",
+    "Mi az a bók, amit mindig hallani akarok?"
   ]
 };

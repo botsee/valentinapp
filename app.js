@@ -1,7 +1,10 @@
 const state = {
   screen: "menu",
   pack: null,
-  deck: []
+  currentQuestion: "",
+  score: 0,
+  turn: 0,
+  names: ["Te", "Ő"]
 };
 
 const app = document.getElementById("app");
@@ -9,43 +12,88 @@ const app = document.getElementById("app");
 function render() {
   app.innerHTML = `
     <div class="phone">
-      ${state.screen === "menu" ? renderMenu() : renderDeck()}
+      ${renderScreen()}
     </div>
   `;
+}
 
-  if (state.screen === "deck") buildDeck();
+function renderScreen() {
+  if (state.screen === "menu") return renderMenu();
+  if (state.screen === "pack") return renderPack();
+  if (state.screen === "game") return renderGame();
 }
 
 function renderMenu() {
   return `
     <h2>🔥 After Dark</h2>
     <div class="menu">
-      <button onclick="start('romantic')">💕 Romantika</button>
-      <button onclick="start('passion')">🔥 Szenvedély</button>
-      <button onclick="start('sexuality')">🌙 Szexualitás</button>
-      <button onclick="start('deep')">🧠 Mély</button>
-      <button onclick="start('fantasy')">🎭 Fantázia</button>
-      <button onclick="start('intimacy')">💌 Intimitás</button>
+      <button onclick="startPack('romantic')">💕 Romantika</button>
+      <button onclick="startPack('passion')">🔥 Szenvedély</button>
+      <button onclick="startPack('sexuality')">🌙 Szexualitás</button>
+      <button onclick="startPack('deep')">🧠 Mély</button>
+      <button onclick="startPack('fantasy')">🎭 Fantázia</button>
+      <button onclick="startPack('intimacy')">💌 Intimitás</button>
+      <button onclick="startGame()">🧠 Mennyire ismersz?</button>
     </div>
   `;
 }
 
-function renderDeck() {
+function renderPack() {
   return `
     <h2>${state.pack.toUpperCase()}</h2>
-    <div class="deck-container" id="deck"></div>
+    <div class="card">${state.currentQuestion}</div>
     <div class="buttons">
-      <button class="secondary" onclick="swipeLeft()">⟵</button>
-      <button onclick="swipeRight()">⟶</button>
+      <button onclick="nextQuestion()">Következő</button>
+      <button class="secondary" onclick="goMenu()">Vissza</button>
     </div>
+  `;
+}
+
+function renderGame() {
+  const currentPlayer = state.names[state.turn % 2];
+
+  return `
+    <h2>${currentPlayer} válaszol</h2>
+    <div class="card">${state.currentQuestion}</div>
+    <div class="buttons">
+      <button onclick="correct()">✔️ Helyes</button>
+      <button onclick="nextTurn()">Passz</button>
+    </div>
+    <p>Pontszám: ${state.score}</p>
     <button class="secondary" onclick="goMenu()">Vissza</button>
   `;
 }
 
-function start(pack) {
+function startPack(pack) {
   state.pack = pack;
-  state.deck = shuffle([...questions[pack]]);
-  state.screen = "deck";
+  state.screen = "pack";
+  state.currentQuestion = randomFrom(questions[pack]);
+  render();
+}
+
+function nextQuestion() {
+  state.currentQuestion = randomFrom(questions[state.pack]);
+  render();
+}
+
+function startGame() {
+  state.screen = "game";
+  state.score = 0;
+  state.turn = 0;
+  state.currentQuestion = randomFrom(questions.game);
+  render();
+}
+
+function correct() {
+  state.score++;
+  state.turn++;
+  state.currentQuestion = randomFrom(questions.game);
+  render();
+}
+
+function nextTurn() {
+  state.turn++;
+  state.currentQuestion = randomFrom(questions.game);
   render();
 }
 
@@ -54,80 +102,8 @@ function goMenu() {
   render();
 }
 
-function buildDeck() {
-  const deckEl = document.getElementById("deck");
-  deckEl.innerHTML = "";
-
-  state.deck.slice(0,3).forEach((text, index) => {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    if (index === 1) card.classList.add("back");
-    if (index === 2) card.classList.add("third");
-
-    const span = document.createElement("span");
-    span.innerText = text;
-    card.appendChild(span);
-
-    deckEl.appendChild(card);
-  });
-
-  attachSwipe();
-}
-
-function attachSwipe() {
-  const card = document.querySelector(".card");
-  if (!card) return;
-
-  let startX = 0;
-
-  card.addEventListener("pointerdown", e => {
-    startX = e.clientX;
-    card.setPointerCapture(e.pointerId);
-  });
-
-  card.addEventListener("pointermove", e => {
-    if (!startX) return;
-    const diff = e.clientX - startX;
-    card.style.transform = `translateX(${diff}px) rotate(${diff/10}deg)`;
-  });
-
-  card.addEventListener("pointerup", e => {
-    const diff = e.clientX - startX;
-    handleRelease(diff, card);
-    startX = 0;
-  });
-}
-
-function handleRelease(diff, card) {
-  if (Math.abs(diff) > 100) {
-    card.style.transform = `translateX(${diff > 0 ? 500 : -500}px) rotate(${diff/5}deg)`;
-    setTimeout(() => {
-      state.deck.shift();
-      if (state.deck.length === 0) {
-        state.deck = shuffle([...questions[state.pack]]);
-      }
-      buildDeck();
-    }, 250);
-  } else {
-    card.style.transform = "";
-  }
-}
-
-function swipeRight() {
-  const card = document.querySelector(".card");
-  if (!card) return;
-  handleRelease(200, card);
-}
-
-function swipeLeft() {
-  const card = document.querySelector(".card");
-  if (!card) return;
-  handleRelease(-200, card);
-}
-
-function shuffle(arr) {
-  return arr.sort(() => Math.random() - 0.5);
+function randomFrom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 render();
