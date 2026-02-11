@@ -2,7 +2,7 @@ const state = {
   screen: "menu",
   pack: null,
   currentQuestion: "",
-  score: 0,
+  scores: [0, 0],
   turn: 0,
   names: ["Te", "Ő"]
 };
@@ -25,27 +25,27 @@ function renderScreen() {
 
 function renderMenu() {
   return `
-    <h2>🔥 After Dark</h2>
+    <h1>❤️ Valentin-app</h1>
     <div class="menu">
-      <button onclick="startPack('romantic')">💕 Romantika</button>
-      <button onclick="startPack('passion')">🔥 Szenvedély</button>
-      <button onclick="startPack('sexuality')">🌙 Szexualitás</button>
-      <button onclick="startPack('deep')">🧠 Mély</button>
-      <button onclick="startPack('fantasy')">🎭 Fantázia</button>
-      <button onclick="startPack('intimacy')">💌 Intimitás</button>
-      <button onclick="startGame()">🧠 Mennyire ismersz?</button>
+      <div class="menu-card" onclick="startPack('romantic')">💕 Romantika</div>
+      <div class="menu-card" onclick="startPack('passion')">🔥 Szenvedély</div>
+      <div class="menu-card" onclick="startPack('sexuality')">🌙 Szexualitás</div>
+      <div class="menu-card" onclick="startPack('deep')">🧠 Mély</div>
+      <div class="menu-card" onclick="startPack('fantasy')">🎭 Fantázia</div>
+      <div class="menu-card" onclick="startPack('intimacy')">💌 Intimitás</div>
+      <div class="menu-card" onclick="startGame()">🧠 Mennyire ismersz?</div>
     </div>
   `;
 }
 
 function renderPack() {
   return `
-    <h2>${state.pack.toUpperCase()}</h2>
+    <h1>${state.pack.toUpperCase()}</h1>
     <div class="card">${state.currentQuestion}</div>
     <div class="buttons">
       <button onclick="nextQuestion()">Következő</button>
-      <button class="secondary" onclick="goMenu()">Vissza</button>
     </div>
+    <button class="secondary small" onclick="goMenu()">Vissza</button>
   `;
 }
 
@@ -53,14 +53,21 @@ function renderGame() {
   const currentPlayer = state.names[state.turn % 2];
 
   return `
-    <h2>${currentPlayer} válaszol</h2>
+    <h1>Mennyire ismersz?</h1>
+    
+    <div class="scoreboard">
+      <div>${state.names[0]}: ${state.scores[0]}</div>
+      <div>${state.names[1]}: ${state.scores[1]}</div>
+    </div>
+
     <div class="card">${state.currentQuestion}</div>
+
     <div class="buttons">
       <button onclick="correct()">✔️ Helyes</button>
       <button onclick="nextTurn()">Passz</button>
     </div>
-    <p>Pontszám: ${state.score}</p>
-    <button class="secondary" onclick="goMenu()">Vissza</button>
+
+    <button class="secondary small" onclick="goMenu()">Vissza</button>
   `;
 }
 
@@ -78,14 +85,15 @@ function nextQuestion() {
 
 function startGame() {
   state.screen = "game";
-  state.score = 0;
+  state.scores = [0, 0];
   state.turn = 0;
   state.currentQuestion = randomFrom(questions.game);
   render();
 }
 
 function correct() {
-  state.score++;
+  const playerIndex = state.turn % 2;
+  state.scores[playerIndex]++;
   state.turn++;
   state.currentQuestion = randomFrom(questions.game);
   render();
