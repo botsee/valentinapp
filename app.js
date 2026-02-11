@@ -61,9 +61,14 @@ function buildDeck() {
   state.deck.slice(0,3).forEach((text, index) => {
     const card = document.createElement("div");
     card.className = "card";
+
     if (index === 1) card.classList.add("back");
     if (index === 2) card.classList.add("third");
-    card.innerText = text;
+
+    const span = document.createElement("span");
+    span.innerText = text;
+    card.appendChild(span);
+
     deckEl.appendChild(card);
   });
 

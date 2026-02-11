@@ -23,17 +23,17 @@ body {
   padding: 24px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 h2 {
   text-align: center;
-  margin: 0 0 10px 0;
+  margin: 0 0 15px 0;
 }
 
 .deck-container {
   flex: 1;
   position: relative;
-  margin-top: 10px;
 }
 
 .card {
@@ -49,18 +49,28 @@ h2 {
   font-size: 20px;
   background: rgba(255,255,255,0.06);
   box-shadow: inset 0 0 30px rgba(255,0,90,0.15);
-  transition: transform 0.25s ease, opacity 0.25s ease;
   user-select: none;
+  transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
+/* MÁSODIK KÁRTYA */
 .card.back {
-  transform: scale(0.95) translateY(10px);
-  opacity: 0.6;
+  transform: scale(0.95) translateY(15px);
+  opacity: 0.5;
+  pointer-events: none;
 }
 
+/* HARMADIK KÁRTYA */
 .card.third {
-  transform: scale(0.9) translateY(20px);
-  opacity: 0.3;
+  transform: scale(0.9) translateY(30px);
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* csak a legfelső kártyán jelenjen meg szöveg normál opacityvel */
+.card.back span,
+.card.third span {
+  opacity: 0;
 }
 
 .buttons {
