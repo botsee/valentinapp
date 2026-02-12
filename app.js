@@ -78,16 +78,20 @@ function renderMennyire() {
 
       <div class="card">${question}</div>
 
-      <div class="buttons">
-        <button onclick="addPoint(1)">Fél 1 pont</button>
-        <button onclick="addPoint(2)">Fél 2 pont</button>
-      </div>
+      <div class="score-buttons">
+  <button class="score-btn" onclick="addPoint(1)">
+    Enikó ✔
+  </button>
+  <button class="score-btn" onclick="addPoint(2)">
+    Balázs ✔
+  </button>
+</div>
 
       <div class="buttons">
         <button onclick="nextMennyire()">Következő</button>
       </div>
 
-      <button class="secondary small" onclick="renderMenu()">Vissza</button>
+      <button class="secondary small horizontal" onclick="renderMenu()">Vissza</button>
     </div>
   `;
 }

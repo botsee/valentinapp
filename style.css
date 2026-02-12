@@ -181,3 +181,22 @@ button.small {
 .back-btn {
   display: inline-block;
 }
+.score-buttons {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.score-btn {
+  flex: 1;
+  background: linear-gradient(90deg,#ff4d6d,#ff8fa3);
+  border: none;
+  border-radius: 25px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.next-btn {
+  margin-top: 10px;
+}
