@@ -278,6 +278,24 @@ function prevLevel() {
     renderKihivas();
   }
 }
+function showLevelComplete() {
+  const nextLevel = currentLevel + 1;
+
+  app.innerHTML += `
+    <div class="level-overlay">
+      <div class="level-box">
+        <h2>✨ Szint teljesítve ✨</h2>
+        ${
+          currentLevel < 5
+          ? `<p>Level ${nextLevel} unlocked 🔓</p>
+             <button onclick="goToNextLevel()">Tovább</button>`
+          : `<p>Minden szint teljesítve 🔥</p>
+             <button onclick="renderMenu()">Vissza a menübe</button>`
+        }
+      </div>
+    </div>
+  `;
+}
 
 /* =========================
    START
