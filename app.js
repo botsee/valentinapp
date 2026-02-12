@@ -32,6 +32,7 @@ function shuffle(array) {
    FŐMENÜ
 =========================*/
 function renderMenu() {
+  document.body.className = "theme-menu";
   clearInterval(timerInterval);
   currentMode = null;
 
@@ -56,6 +57,7 @@ function renderMenu() {
    MENNYIRE ISMERSZ
 =========================*/
 function startMennyire() {
+  document.body.className = "theme-kapcsolodas";
   currentMode = "mennyire";
   currentDeck = shuffle(getAllQuestions("mennyireIsmersz"));
   currentIndex = 0;
@@ -116,6 +118,7 @@ function nextMennyire() {
    BESZÉLGETŐS TÉMÁK
 =========================*/
 function startTopic(topic) {
+  document.body.className = "theme-" + topic;
   currentMode = "topic";
   currentTopic = topic;
   currentDeck = shuffle(getAllQuestions(currentTopic));
@@ -161,6 +164,7 @@ function nextQuestion() {
    KIHÍVÁS
 =========================*/
 function startKihivas() {
+  document.body.className = "theme-kihivas";
   currentMode = "kihivas";
   currentLevel = 1;
   levelProgress = 0;

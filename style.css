@@ -236,3 +236,34 @@ select {
   margin-bottom: 8px;
   font-size: 14px;
 }
+/* =========================
+   THEME SYSTEM
+=========================*/
+
+body.theme-menu {
+  background: linear-gradient(135deg,#1a1a1a,#2a2a2a);
+}
+
+body.theme-kapcsolodas {
+  background: linear-gradient(135deg,#3b0d1f,#6a1b3f);
+}
+
+body.theme-melyseg {
+  background: linear-gradient(135deg,#1e102f,#3b1d5c);
+}
+
+body.theme-intimitas {
+  background: linear-gradient(135deg,#2b1022,#5a1e47);
+}
+
+body.theme-szexualitas {
+  background: linear-gradient(135deg,#300000,#660000);
+}
+
+body.theme-kihivas {
+  background: linear-gradient(135deg,#000000,#3a0000);
+}
+
+body {
+  transition: background 0.5s ease;
+}
