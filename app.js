@@ -8,7 +8,7 @@ let currentTopic = null;
 /* =========================
    MENNYIRE ISMERSZ STATE
 =========================*/
-let player1Name = "Enikó";
+let player1Name = "Enikő";
 let player2Name = "Balázs";
 
 
@@ -46,6 +46,7 @@ function renderMenu() {
         <div class="menu-card" onclick="startTopic('szexualitas')">Szexualitás</div>
         <div class="menu-card" onclick="startMennyire()">Mennyire ismersz?</div>
         <div class="menu-card" onclick="startKihivas()">🔥 Kihívás</div>
+        <div class="menu-card" onclick="renderQuestionManager()">⚙ Kérdések kezelése</div>
       </div>
     </div>
   `;
@@ -56,7 +57,7 @@ function renderMenu() {
 =========================*/
 function startMennyire() {
   currentMode = "mennyire";
-  currentDeck = shuffle(defaultQuestions.temak.mennyireIsmersz);
+  currentDeck = shuffle(getAllQuestions("mennyireIsmersz"));
   currentIndex = 0;
   player1Score = 0;
   player2Score = 0;
@@ -80,7 +81,7 @@ function renderMennyire() {
 
       <div class="score-buttons">
   <button class="score-btn" onclick="addPoint(1)">
-    Enikó ✔
+    Enikő ✔
   </button>
   <button class="score-btn" onclick="addPoint(2)">
     Balázs ✔
@@ -105,7 +106,7 @@ function addPoint(player) {
 function nextMennyire() {
   currentIndex++;
   if (currentIndex >= currentDeck.length) {
-    currentDeck = shuffle(defaultQuestions.temak.mennyireIsmersz);
+    currentDeck = shuffle(getAllQuestions("mennyireIsmersz"));
     currentIndex = 0;
   }
   renderMennyire();
@@ -117,7 +118,7 @@ function nextMennyire() {
 function startTopic(topic) {
   currentMode = "topic";
   currentTopic = topic;
-  currentDeck = shuffle(defaultQuestions.temak[topic]);
+  currentDeck = shuffle(getAllQuestions(currentTopic));
   currentIndex = 0;
   renderCard();
 }
@@ -278,3 +279,105 @@ function prevLevel() {
    START
 =========================*/
 renderMenu();
+/* =========================
+   QUESTION MANAGER
+=========================*/
+
+let userQuestions = JSON.parse(localStorage.getItem("userQuestions")) || {};
+
+function saveQuestions() {
+  localStorage.setItem("userQuestions", JSON.stringify(userQuestions));
+}
+
+function getAllQuestions(topic) {
+  const base = defaultQuestions.temak[topic] || [];
+  const extra = userQuestions[topic] || [];
+  return [...base, ...extra];
+}
+
+function renderQuestionManager() {
+  app.innerHTML = `
+    <div class="phone">
+      <h1>⚙ Kérdések kezelése</h1>
+
+      <textarea id="newQuestion" placeholder="Írj be új kérdést..."></textarea>
+
+      <select id="category">
+        <option value="kapcsolodas">Kapcsolódás</option>
+        <option value="melyseg">Mélység</option>
+        <option value="intimitas">Intimitás</option>
+        <option value="szexualitas">Szexualitás</option>
+        <option value="mennyireIsmersz">Mennyire ismersz?</option>
+      </select>
+
+      <button onclick="addQuestion()">Hozzáadás</button>
+      <button onclick="renderDeleteView()">Törlés</button>
+      <button onclick="resetToDefault()">Alap visszaállítás</button>
+
+      <button class="secondary small horizontal" onclick="renderMenu()">Vissza</button>
+    </div>
+  `;
+}
+
+function addQuestion() {
+  const text = document.getElementById("newQuestion").value.trim();
+  const category = document.getElementById("category").value;
+
+  if (!text) return;
+
+  if (!userQuestions[category]) {
+    userQuestions[category] = [];
+  }
+
+  userQuestions[category].push(text);
+  saveQuestions();
+  alert("Kérdés hozzáadva!");
+  renderQuestionManager();
+}
+
+function renderDeleteView() {
+  let html = `
+    <div class="phone">
+      <h1>Kérdések törlése</h1>
+  `;
+
+  Object.keys(defaultQuestions.temak).forEach(topic => {
+    const all = getAllQuestions(topic);
+    html += `<h3>${topic}</h3>`;
+
+    all.forEach((q, index) => {
+      html += `
+        <div class="delete-item">
+          <span>${q}</span>
+          <button onclick="deleteQuestion('${topic}', ${index})">🗑</button>
+        </div>
+      `;
+    });
+  });
+
+  html += `
+      <button class="secondary small horizontal" onclick="renderQuestionManager()">Vissza</button>
+    </div>
+  `;
+
+  app.innerHTML = html;
+}
+
+function deleteQuestion(topic, index) {
+  const baseLength = defaultQuestions.temak[topic].length;
+
+  if (index < baseLength) {
+    defaultQuestions.temak[topic].splice(index, 1);
+  } else {
+    userQuestions[topic].splice(index - baseLength, 1);
+    saveQuestions();
+  }
+
+  renderDeleteView();
+}
+
+function resetToDefault() {
+  localStorage.removeItem("userQuestions");
+  alert("Alap kérdések visszaállítva!");
+  location.reload();
+}
