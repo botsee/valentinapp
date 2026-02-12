@@ -91,7 +91,7 @@ function renderMennyire() {
         <button onclick="nextMennyire()">Következő</button>
       </div>
 
-      <button class="secondary small horizontal" onclick="renderMenu()">Vissza</button>
+      <button class="secondary small horizontal back-btn" onclick="renderMenu()">Vissza</button>
     </div>
   `;
 }
@@ -141,7 +141,7 @@ function renderCard() {
         </div>
       </div>
 
-      <button class="secondary small back-btn" onclick="renderMenu()">Vissza</button>
+      <button class="secondary small horizontal back-btn" onclick="renderMenu()">Vissza</button>
     </div>
   `;
 }
@@ -233,7 +233,7 @@ function renderKihivas() {
         <button class="secondary small" onclick="nextLevel()">⬆ Szint +</button>
       </div>
 
-      <button class="secondary small" onclick="renderMenu()">Vissza</button>
+      <button class="secondary small horizontal back-btn" onclick="renderMenu()">Vissza</button>
     </div>
   `;
 }
