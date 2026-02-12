@@ -8,8 +8,9 @@ let currentTopic = null;
 /* =========================
    MENNYIRE ISMERSZ STATE
 =========================*/
-let player1Score = 0;
-let player2Score = 0;
+let player1Name = "Enikó";
+let player2Name = "Balázs";
+
 
 /* =========================
    KIHÍVÁS STATE
@@ -37,6 +38,7 @@ function renderMenu() {
   app.innerHTML = `
     <div class="phone">
       <h1>❤️ Valentin-app</h1>
+<div class="subtitle">${player1Name} & ${player2Name}</div>
       <div class="menu">
         <div class="menu-card" onclick="startTopic('kapcsolodas')">Kapcsolódás</div>
         <div class="menu-card" onclick="startTopic('melyseg')">Mélység</div>
@@ -68,10 +70,11 @@ function renderMennyire() {
     <div class="phone">
       <h1>🧠 Mennyire ismersz?</h1>
       
-      <div class="scoreboard">
-        <div>Fél 1: ${player1Score}</div>
-        <div>Fél 2: ${player2Score}</div>
-      </div>
+     <div class="scoreboard">
+  <div>${player1Name}: ${player1Score}</div>
+  <div>${player2Name}: ${player2Score}</div>
+</div>
+
 
       <div class="card">${question}</div>
 
