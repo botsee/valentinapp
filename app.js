@@ -124,14 +124,24 @@ function renderCard() {
   app.innerHTML = `
     <div class="phone">
       <h1>Valentin-app ❤️</h1>
+
       <div class="card">${question}</div>
+
       <div class="buttons">
         <button onclick="nextQuestion()">Következő</button>
       </div>
-      <button class="secondary small" onclick="renderMenu()">Vissza</button>
+
+      <div class="progress">
+        <div class="progress-fill" 
+          style="width:${((currentIndex+1)/currentDeck.length)*100}%">
+        </div>
+      </div>
+
+      <button class="secondary small back-btn" onclick="renderMenu()">Vissza</button>
     </div>
   `;
 }
+
 
 function nextQuestion() {
   currentIndex++;
